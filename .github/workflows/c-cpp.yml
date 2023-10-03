@@ -12,5 +12,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - uses: actions/checkout@v3
+    - name: Install libibverbs
+      run: sudo apt-get install -y libibverbs-dev
     - name: make
       run: make
