@@ -8,11 +8,18 @@
 #include "nl.h"
 #include "verbs.h"
 
+static const char *oper_states[] = {
+	"unknown", "notpresent", "down", "lowerlayerdown",
+	"testing", "dormant",	 "up"
+};
+
 void print_line(const struct gid_hash_entry *entry, const struct if_info *infos)
 {
-	printf("%s port %d <===> %s (%s)\n", ibv_get_device_name(entry->device),
-		entry->port, infos->if_name, 
-		(infos->ifi_flags & IFF_UP) ? "Up" : "Down");
+	printf("%s/%d gid #%d (%s) <===> %s (%s)\n",
+		ibv_get_device_name(entry->device),
+		entry->port, entry->gid_id,
+		ibv_port_state_str(entry->port_attr.state),
+		infos->if_name, oper_states[infos->operstate]);
 }
 
 int mac_lookup(const struct if_info *infos, void* arg)
