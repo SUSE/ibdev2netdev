@@ -7,6 +7,7 @@ struct gid_hash_entry {
 	struct ibv_device *device;
 	uint32_t port;
 	struct ibv_port_attr port_attr;
+	int gid_id;
 	union ibv_gid gid;
 };
 

@@ -20,6 +20,7 @@ static int load_ib_port_gid(gid_hash_t *h, struct gid_hash_entry *entry,
 	}
 	if (!null_gid(&gid)) {
 		entry->gid = gid;
+		entry->gid_id = gid_id;
 		hash_add_gid_entry(h, gid.raw, entry);
 	}
 	return 0;
