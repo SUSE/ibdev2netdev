@@ -44,7 +44,8 @@ gid_hash_t *gid_hash;
 
 static int null_gid(union ibv_gid *gid)
 {
-	return !(gid->raw[8] | gid->raw[9] | gid->raw[10] | gid->raw[11] |
+	return !(gid->raw[4] | gid->raw[5] | gid->raw[6] | gid->raw[7] |
+		gid->raw[8] | gid->raw[9] | gid->raw[10] | gid->raw[11] |
 		gid->raw[12] | gid->raw[13] | gid->raw[14] | gid->raw[15]);
 }
 
