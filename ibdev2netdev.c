@@ -43,17 +43,6 @@ int mac_lookup(const struct if_info *infos, void* arg)
 		gid[GID_LEN - 2] = infos->mac[4];
 		gid[GID_LEN - 1] = infos->mac[5];
 
-#ifdef DEBUG
-		printf("If: %s MAC: %02hhx%02hhx%02hhx%02hhx%02hhx%02hhx, GID:\n",
-			infos->if_name,
-			infos->mac[0], infos->mac[1],
-			infos->mac[2], infos->mac[3],
-			infos->mac[4], infos->mac[5]);
-		union ibv_gid dgid;
-		memcpy(dgid.raw, gid, sizeof(gid));
-		print_formated_gid(&dgid, 0);
-#endif
-
 		entry = hash_search_entry(h, gid, mask);
 		if (!entry) {
 			/* Some interfaces seems to have a weird behaviour (at least seen on irdma)

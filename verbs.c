@@ -20,9 +20,6 @@ static int load_ib_port_gid(gid_hash_t *h, struct gid_hash_entry *entry,
 	}
 	if (!null_gid(&gid)) {
 		entry->gid = gid;
-#ifdef DEBUG
-		print_formated_gid(&gid, gid_id);
-#endif
 		hash_add_gid_entry(h, gid.raw, entry);
 	}
 	return 0;
@@ -39,9 +36,6 @@ static int load_ib_port_gids(gid_hash_t *h, struct gid_hash_entry *entry,
 		fprintf(stderr, "Failed to query port %u props\n", port);
 		return -1;
 	}
-#ifdef DEBUG
-	printf("\tOpened port %d\n", port);
-#endif
 
 	entry->port = port;
 	entry->port_attr = port_attr;
@@ -69,9 +63,6 @@ static int load_ib_dev_gids(gid_hash_t *h, struct ibv_device *dev)
 		fprintf(stderr, "Failed to open device %s\n", dev_name);
 		return -1;
 	}
-#ifdef DEBUG
-	printf("Opened device %s\n", dev_name);
-#endif
 	if (ibv_query_device_ex(ctx, NULL, &dev_attr)) {
 		fprintf(stderr, "Failed to query device props of %s\n", dev_name);
 		goto cleanup;
