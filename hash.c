@@ -5,7 +5,7 @@
 
 #include "hash.h"
 
-gid_hash_t *hash_alloc()
+gid_hash_t *hash_alloc(void)
 {
 	return calloc(256,  sizeof(gid_hash_t));
 }

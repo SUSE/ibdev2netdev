@@ -15,7 +15,7 @@ struct nl_req_s
 	struct rtgenmsg gen;
 };
 
-int nl_setup()
+int nl_setup(void)
 {
 	int fd, b;
 	struct sockaddr_nl local;

@@ -18,7 +18,7 @@ typedef union gid_hash_u
 } gid_hash_t;
 
 
-gid_hash_t *hash_alloc();
+gid_hash_t *hash_alloc(void);
 void hash_free(gid_hash_t h[]);
 
 void hash_add_gid_entry(gid_hash_t h[], const unsigned char gid[],

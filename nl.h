@@ -11,7 +11,7 @@ struct if_info
 	unsigned char operstate;
 };
 
-int nl_setup();
+int nl_setup(void);
 int nl_request_links(int fd);
 int nl_iterate_links(int fd, int (*fn)(const struct if_info*, void*), void* arg);
 void nl_close(int fd);
