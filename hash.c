@@ -10,7 +10,7 @@ gid_hash_t *hash_alloc(void)
 	return calloc(256,  sizeof(gid_hash_t));
 }
 
-static void _hash_free(gid_hash_t h[], int depth)
+static void _hash_free(gid_hash_t h[], unsigned depth)
 {
 	for (int i = 0; i < 256; ++i){
 		if (h[i].sub) {
@@ -28,7 +28,7 @@ void hash_free(gid_hash_t h[])
 }
 
 static void _add_gid_entry(gid_hash_t h[], const unsigned char gid[],
-			const struct gid_hash_entry *entry, int depth)
+			const struct gid_hash_entry *entry, unsigned depth)
 {
 	const unsigned char key = gid[depth];
 
@@ -50,7 +50,7 @@ void hash_add_gid_entry(gid_hash_t h[], const unsigned char gid[],
 	_add_gid_entry(h, gid, entry, 0);
 }
 
-static const struct gid_hash_entry* _load_entry(const gid_hash_t h[], const unsigned char gid[], int depth)
+static const struct gid_hash_entry* _load_entry(const gid_hash_t h[], const unsigned char gid[], unsigned depth)
 {
 	const unsigned char key = gid[depth];
 
@@ -69,7 +69,7 @@ const struct gid_hash_entry* hash_load_entry(const gid_hash_t h[], const unsigne
 }
 
 static const struct gid_hash_entry*
-_search_entry(const gid_hash_t h[], const unsigned char gid[], uint64_t mask, int depth)
+_search_entry(const gid_hash_t h[], const unsigned char gid[], uint64_t mask, unsigned depth)
 {
 	unsigned char key = gid[depth];
 	const int mask_set = !!(mask & (1ULL << depth));
@@ -101,11 +101,11 @@ const struct gid_hash_entry* hash_search_entry(const gid_hash_t h[], const unsig
 	return _search_entry(h, gid, mask, 0);
 }
 
-static void _dump_gid_hash(gid_hash_t h[], int depth, char prefix[GID_LEN])
+static void _dump_gid_hash(gid_hash_t h[], unsigned depth, char prefix[GID_LEN])
 {
 	if (depth == GID_LEN) {
 		struct gid_hash_entry* entry = (struct gid_hash_entry*) h;
-		for(int i = 0; i < GID_LEN; ++i)
+		for(unsigned i = 0; i < GID_LEN; ++i)
 			printf("%02hhx ", prefix[i]);
 		printf(": %s \n",entry->device->name);
 		return;
