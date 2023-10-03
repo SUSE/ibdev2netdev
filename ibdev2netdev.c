@@ -431,8 +431,10 @@ int mac_lookup(const struct if_info *infos)
 
 		print_line(entry, infos);
 		return 1;
+	} else if (infos->mac_len == 0){
+		/* Pure IP stuff like tun0. It is not linked to a RDMA device anyway */
 	} else {
-		fprintf(stderr, "Unsupported MAC len %d\n", infos->mac_len);
+		fprintf(stderr, "Unsupported MAC len %d for interface %s\n", infos->mac_len, infos->if_name);
 		return -1;
 	}
 
