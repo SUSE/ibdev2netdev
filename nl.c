@@ -114,6 +114,9 @@ int nl_iterate_links(int fd, int (*fn)(const struct if_info*, void*), void* arg)
 					infos.mac_len = RTA_PAYLOAD(attr_ptr);
 					infos.mac = (const char*)RTA_DATA(attr_ptr);
 					break;
+				case IFLA_OPERSTATE:
+					infos.operstate = *(unsigned char*)RTA_DATA(attr_ptr);
+					break;
 				}
 				attr_ptr = RTA_NEXT(attr_ptr, attr_len);
 			}

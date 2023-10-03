@@ -8,6 +8,7 @@ struct if_info
 	const char *if_name;
 	uint32_t mac_len;
 	const char *mac;
+	unsigned char operstate;
 };
 
 int nl_setup();
