@@ -127,3 +127,8 @@ int nl_iterate_links(int fd, int (*fn)(const struct if_info*, void*), void* arg)
 		}
 	}
 }
+
+void nl_close(int fd)
+{
+	close(fd);
+}

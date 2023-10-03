@@ -14,5 +14,6 @@ struct if_info
 int nl_setup();
 int nl_request_links(int fd);
 int nl_iterate_links(int fd, int (*fn)(const struct if_info*, void*), void* arg);
+void nl_close(int fd);
 
 #endif /* __NL_H__ */
