@@ -170,9 +170,6 @@ static int load_ib_port_gid(gid_hash_t *h, struct gid_hash_entry *entry,
 		return 0;
 	}
 	if (!null_gid(&gid)) {
-		/* We do not care about subnet_prefix, we only want to match interfaces IDs */
-		gid.global.subnet_prefix = 0ULL;
-
 		entry->gid = gid;
 #ifdef DEBUG
 		print_formated_gid(&gid, gid_id);
@@ -391,7 +388,7 @@ int mac_lookup(const struct if_info *infos)
 
 
 		memcpy(&gid[GID_LEN - 8], &infos->mac[20 - 8], 8);
-		entry = load_entry(gid_hash, gid);
+		entry = search_entry(gid_hash, gid, ~0xffULL);
 		if (!entry)
 			return 0;
 
@@ -399,7 +396,7 @@ int mac_lookup(const struct if_info *infos)
 		return 1;
 
 	} else if (infos->mac_len == 6){
-		uint64_t mask = (uint64_t)(-1LL);
+		uint64_t mask = (uint64_t)(~0xffULL);
 
 		gid[GID_LEN - 8] = infos->mac[0] ^ 0x2;
 		gid[GID_LEN - 7] = infos->mac[1];
