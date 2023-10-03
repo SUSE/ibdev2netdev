@@ -10,7 +10,7 @@ LDFLAGS := -libverbs
 all: $(exec)
 
 $(exec): $(objs) Makefile
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(objs)
 
 %.o:%.c Makefile $(headers)
 	$(CC) $(CFLAGS) -o $@ -c $<
