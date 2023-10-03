@@ -420,8 +420,16 @@ int mac_lookup(const struct if_info *infos)
 #endif
 
 		entry = search_entry(gid_hash, gid, mask);
-		if (!entry)
-			return 0;
+		if (!entry) {
+			/* Some interfaces seems to have a weird behaviour (at least seen on irdma)
+			 * where their gid is the (mac << 2) set as the subnet_prefix and that's it...
+			 * Try for that, just in case */
+			memcpy(gid, infos->mac, 6);
+			memset(gid + 6, 0, sizeof(gid) - 6);
+			entry = load_entry(gid_hash, gid);
+			if(!entry)
+				return 0;
+		}
 
 		print_line(entry, infos);
 		return 1;
