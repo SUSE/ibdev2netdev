@@ -13,7 +13,7 @@ static const char *oper_states[] = {
 	"testing", "dormant",	 "up"
 };
 
-void print_line(const struct gid_hash_entry *entry, const struct if_info *infos)
+static void print_line(const struct gid_hash_entry *entry, const struct if_info *infos)
 {
 	printf("%s/%d gid #%d (%s) <===> %s (%s)\n",
 		ibv_get_device_name(entry->device),
@@ -22,7 +22,7 @@ void print_line(const struct gid_hash_entry *entry, const struct if_info *infos)
 		infos->if_name, oper_states[infos->operstate]);
 }
 
-int mac_lookup(const struct if_info *infos, void* arg)
+static int mac_lookup(const struct if_info *infos, void* arg)
 {
 	gid_hash_t *h = (gid_hash_t*)arg;
 	const struct gid_hash_entry *entry;
@@ -32,7 +32,7 @@ int mac_lookup(const struct if_info *infos, void* arg)
 		/* In that case, we want to match the last 8B to the GID interface_id
 		 * so offset the mac to drop the first 4 extra bytes and use the mask
 		 * to only match the last 8 ones. */
-		entry = hash_search_entry(h, infos->mac + 20 - GID_LEN, ~0xffULL);
+		entry = hash_search_entry(h, (const unsigned char *)infos->mac + 20 - GID_LEN, ~0xffULL);
 		if (!entry)
 			return 0;
 
@@ -82,12 +82,7 @@ int mac_lookup(const struct if_info *infos, void* arg)
 	return 0;
 }
 
-void nl_close(int fd)
-{
-	close(fd);
-}
-
-int main()
+int main(void)
 {
 	int fd;
 	gid_hash_t *gid_hash;
