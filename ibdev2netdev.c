@@ -22,9 +22,10 @@ int mac_lookup(const struct if_info *infos, void* arg)
 	unsigned char gid[GID_LEN] = {0};
 
 	if(infos->mac_len == 20) {
-		/* In that case, we want to match the last 8B to the GID interface_id */
-		memcpy(&gid[GID_LEN - 8], &infos->mac[20 - 8], 8);
-		entry = hash_search_entry(h, gid, ~0xffULL);
+		/* In that case, we want to match the last 8B to the GID interface_id
+		 * so offset the mac to drop the first 4 extra bytes and use the mask
+		 * to only match the last 8 ones. */
+		entry = hash_search_entry(h, infos->mac + 20 - GID_LEN, ~0xffULL);
 		if (!entry)
 			return 0;
 
@@ -34,6 +35,13 @@ int mac_lookup(const struct if_info *infos, void* arg)
 	} else if (infos->mac_len == 6){
 		uint64_t mask = (uint64_t)(~0xffULL);
 
+		/* There's some fancy computations here that were found in
+		 *  the MOFED doc and in the original ibdev2netdev. It works,
+		 * so let's use it:
+		 * gid Byte 8 9 10 13 14 are computed from mac[012345]
+		 * (or the other way around)
+		 * 2 bytes are lost in translation, so disable them from the bitmask
+		 */
 		gid[GID_LEN - 8] = infos->mac[0] ^ 0x2;
 		gid[GID_LEN - 7] = infos->mac[1];
 		gid[GID_LEN - 6] = infos->mac[2];

@@ -23,9 +23,16 @@ void hash_free(gid_hash_t h[]);
 void hash_add_gid_entry(gid_hash_t h[], const unsigned char gid[],
 			const struct gid_hash_entry *entry);
 
+/* Load the entry in the hash matching exactly the provided GID */
 const struct gid_hash_entry*
 hash_load_entry(const gid_hash_t h[], const unsigned char gid[]);
 
+/*
+ * Search an entry in the hash which matches the provided GID selected bytes.
+ * - If the N-th bit of mask is set, gid[N] must be a match for the N-th byte of the hashed entry
+ * - If the N-th bit is not set, search_entry tries all possible values and returns the first
+ *   selected match found
+ */
 const struct gid_hash_entry*
 hash_search_entry(const gid_hash_t h[], const unsigned char gid[], uint64_t mask);
 
