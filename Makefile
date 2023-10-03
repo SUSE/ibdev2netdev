@@ -4,16 +4,16 @@ objs    := $(patsubst %.c,%.o,$(srcs))
 exec    := ibdev2netdev
 
 CC := gcc
-CCFLAGS := -O2 -Wall -Wextra $(CFLAGS)
+CCFLAGS := -O2 -Wall -Wextra -Werror -Wmissing-prototypes -Wmissing-declarations -Wwrite-strings -Wformat=2 -Wformat-nonliteral -Wdate-time -Wnested-externs -Wshadow -Wstrict-prototypes -Wold-style-definition -Wredundant-decls $(CFLAGS)
 LDFLAGS := -libverbs
 
 all: $(exec)
 
 $(exec): $(objs) Makefile
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(objs)
+	$(CC) $(CCFLAGS) $(LDFLAGS) -o $@ $(objs)
 
 %.o:%.c Makefile $(headers)
-	$(CC) $(CFLAGS) -o $@ -c $<
+	$(CC) $(CCFLAGS) -o $@ -c $<
 
 clean:
 	rm -f $(objs) $(exec)
