@@ -15,5 +15,5 @@ jobs:
     - uses: actions/checkout@v3
     - name: Install libibverbs
       run: sudo apt-get install -y libibverbs-dev
-    - name: make
-      run: make
+    - name: Build
+      run: mkdir build && cd build && cmake .. && make
