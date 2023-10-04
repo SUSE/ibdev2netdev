@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
 
-project(ibdev2netdev)
+project(ibdev2netdev C)
 
 set(CMAKE_C_FLAGS "-O2 -Wall -Wextra -Werror -Wmissing-prototypes -Wmissing-declarations -Wwrite-strings -Wformat=2 -Wformat-nonliteral -Wdate-time -Wnested-externs -Wshadow -Wstrict-prototypes -Wold-style-definition -Wredundant-decls")
 FILE(GLOB Ibdev2netdevSources *.c)
