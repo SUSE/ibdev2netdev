@@ -1,3 +1,2 @@
-ibdev2netdev
 *~
-*.o
+build/
