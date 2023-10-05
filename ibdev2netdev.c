@@ -1,8 +1,10 @@
+
 #include <infiniband/verbs.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <errno.h>
 #include <linux/if.h>
+#include <getopt.h>
 
 #include "hash.h"
 #include "nl.h"
@@ -13,8 +15,60 @@ static const char *oper_states[] = {
 	"testing", "dormant",	 "up"
 };
 
+static const struct option option_list[] = {
+	{ "raw", 0, 0, 'r' },
+	{ "help", 0, 0, 'h' },
+	{ 0, 0, 0, 0}
+};
+
+typedef struct {
+	int raw;
+} ibdev_opts;
+
+static ibdev_opts options;
+
+static void usage(const char* bin_name)
+{
+	printf("Usage: %s [OPTIONS...]\n", bin_name);
+	printf("Options:\n");
+	printf("\t-r, --raw\t\tTab separated output that only display IB interface, IB port# and netdev name.\n");
+	printf("\t-h, --help\t\tPrint this help.\n");
+}
+
+static void init_opts(ibdev_opts *opts)
+{
+	opts->raw = 0;
+}
+
+static int parse_opts(ibdev_opts *opts, int argc, char *argv[])
+{
+	int c;
+	int option_index;
+
+	while ((c = getopt_long(argc, argv, "r", option_list, &option_index)) != -1) {
+		switch(c) {
+		case 'r':
+			opts->raw = 1;
+			break;
+		case 'h':
+			usage(argv[0]);
+			return 0;
+		default:
+			usage(argv[0]);
+			return -1;
+			break;
+		}
+	}
+	return 0;
+}
+
 static void print_line(const struct gid_hash_entry *entry, const struct if_info *infos)
 {
+	if (options.raw) {
+		printf("%s\t%d\t%s\n", ibv_get_device_name(entry->device),
+			entry->port, infos->if_name);
+		return;
+	}
 	printf("%s/%d gid #%d (%s) <===> %s (%s)\n",
 		ibv_get_device_name(entry->device),
 		entry->port, entry->gid_id,
@@ -82,10 +136,16 @@ static int mac_lookup(const struct if_info *infos, void* arg)
 	return 0;
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
 	int fd;
 	gid_hash_t *gid_hash;
+
+	init_opts(&options);
+	if(parse_opts(&options, argc, argv)){
+		fprintf(stderr, "Failed to parse options\n");
+		return -1;
+	}
 
 	gid_hash = hash_alloc();
 	if (!gid_hash) {
