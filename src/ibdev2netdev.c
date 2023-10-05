@@ -16,13 +16,17 @@ static const char *oper_states[] = {
 };
 
 static const struct option option_list[] = {
+	{ "netdev", 1, 0, 'n' },
 	{ "raw", 0, 0, 'r' },
+	{ "rdma", 1, 0, 'R' },
 	{ "help", 0, 0, 'h' },
 	{ 0, 0, 0, 0}
 };
 
 typedef struct {
 	int raw;
+	char *netdev;
+	char *rdma;
 } ibdev_opts;
 
 static ibdev_opts options;
@@ -31,13 +35,15 @@ static void usage(const char* bin_name)
 {
 	printf("Usage: %s [OPTIONS...]\n", bin_name);
 	printf("Options:\n");
-	printf("\t-r, --raw\t\tTab separated output that only display IB interface, IB port# and netdev name.\n");
-	printf("\t-h, --help\t\tPrint this help.\n");
+	printf("\t-n, --netdev [if name]\t\tOnly list the specified netdev.\n");
+	printf("\t-r, --raw\t\t\tTab separated output that only display IB interface, IB port# and netdev name.\n");
+	printf("\t-R, --rdma [rdma name]\t\tOnly list netdev using the specified rdma device.\n");
+	printf("\t-h, --help\t\t\tPrint this help.\n");
 }
 
 static void init_opts(ibdev_opts *opts)
 {
-	opts->raw = 0;
+	memset(opts, 0, sizeof(*opts));
 }
 
 static int parse_opts(ibdev_opts *opts, int argc, char *argv[])
@@ -45,10 +51,25 @@ static int parse_opts(ibdev_opts *opts, int argc, char *argv[])
 	int c;
 	int option_index;
 
-	while ((c = getopt_long(argc, argv, "r", option_list, &option_index)) != -1) {
+	while ((c = getopt_long(argc, argv, "rn:R:", option_list, &option_index)) != -1) {
 		switch(c) {
 		case 'r':
 			opts->raw = 1;
+			break;
+		case 'n':
+			opts->netdev = strdup(optarg);
+			if(!opts->netdev){
+				fprintf(stderr, "Failed to allocate memory\n");
+				return -1;
+			}
+			break;
+
+		case 'R':
+			opts->rdma = strdup(optarg);
+			if(!opts->rdma){
+				fprintf(stderr, "Failed to allocate memory\n");
+				return -1;
+			}
 			break;
 		case 'h':
 			usage(argv[0]);
@@ -59,11 +80,24 @@ static int parse_opts(ibdev_opts *opts, int argc, char *argv[])
 			break;
 		}
 	}
+
+	if(opts->rdma && opts->netdev){
+		fprintf(stderr, "Cannot use both --rdma amd --netdev options at the same time.\n");
+		return -1;
+	}
 	return 0;
 }
 
 static void print_line(const struct gid_hash_entry *entry, const struct if_info *infos)
 {
+	// Skip if the if name does not match the request one (if any)
+	if(options.netdev && strcmp(options.netdev, infos->if_name))
+		return;
+
+	// Skip if the rdma name does not match the request one (if any)
+	if(options.rdma && strcmp(options.rdma, ibv_get_device_name(entry->device)))
+		return;
+
 	if (options.raw) {
 		printf("%s\t%d\t%s\n", ibv_get_device_name(entry->device),
 			entry->port, infos->if_name);
@@ -143,7 +177,6 @@ int main(int argc, char *argv[])
 
 	init_opts(&options);
 	if(parse_opts(&options, argc, argv)){
-		fprintf(stderr, "Failed to parse options\n");
 		return -1;
 	}
 
