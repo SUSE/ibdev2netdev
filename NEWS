@@ -1,0 +1,21 @@
+- ibdev2netdev 0.2.0
+  * Add SUSE LLC Copyrights
+  * options: add option to only display a specified netdev or rdma if
+  * src: move all C files to src directory
+  * add options
+  * cmake: set minimum version to 3.5
+  * drop travis and fix gitflow to use cmake
+  * cmake: mark project as C
+  * add spec file
+  * move to CMake
+  * LICENSE: Add missing copyright
+  * Create README.md
+  * github workflow: add missing checkout and dependencies
+  * Create c-cpp.yml
+  * travis: add a simple compilation test
+  * Makefile: make compilation much stricter
+  * hash: fix signed vs unsigned compareasons
+  * ibdev2netdev: fix missing prototype errors
+  * hash,nl: fix strict prototype errors
+  * nl: move nl_close to its proper file
+

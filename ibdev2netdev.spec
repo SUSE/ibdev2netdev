@@ -19,7 +19,7 @@
 %define         git_ver %{nil}
 
 Name:           ibdev2netdev
-Version:        0.1.0
+Version:        0.2.0
 Release:        0
 Summary:        List netdevs with their associated RDMA interface (IPoIB, RoCE, iWarp)
 License:        GPL-3.0-only
